@@ -54,7 +54,7 @@ class Matrix {
     rand(){
         for(let i = 0; i < this.rows; i++){
             for(let j = 0; j < this.cols; j++){
-                this.value[i][j] = Math.random();
+                this.value[i][j] = Math.random() * 2 - 1;
             }
         }
     }
@@ -120,22 +120,28 @@ class Matrix {
         }
     }
 
+    //Returns
     eSub(arr){
         if(this.cols != arr.cols || this.rows != arr.rows) throw new Error('Dimentions does not match.');
+        let result = new Matrix(this.rows, this.cols);
         for(let i = 0; i < this.rows; i++){
             for(let j = 0; j < this.cols; j++){
-                this.value[i][j] -= arr.value[i][j];
+                result.value[i][j] = this.value[i][j] - arr.value[i][j];
             }
         }
+        return result;
     }
 
+    //returns
     eMult(arr){
         if(this.cols != arr.cols || this.rows != arr.rows) throw new Error('Dimentions does not match.');
+        let result = new Matrix(this.rows, this.cols);
         for(let i = 0; i < this.rows; i++){
             for(let j = 0; j < this.cols; j++){
-                this.value[i][j] *= arr.value[i][j];
+                result.value[i][j] = this.value[i][j] * arr.value[i][j];
             }
         }
+        return result;
     }
 
     eDiv(arr){
@@ -147,6 +153,7 @@ class Matrix {
         }
     }
 
+    //Returns
     transpose(){
         let t = new Array(this.cols);
         for(let i = 0; i < this.cols; i++){
@@ -157,9 +164,10 @@ class Matrix {
                 t[j][i] = this.value[i][j];
             }
         }
-        this.value = t;
+         return new Matrix(t);
     }
 
+    // returns
     dot(arr){
         if(this.cols != arr.rows) throw new Error('Dimentions does not match.');
         let result = new Matrix(this.rows, arr.cols);
@@ -174,17 +182,61 @@ class Matrix {
         }
         return result;
     }
-}
-  
-let a = new Matrix(2,2);
-a.randint(5)
-let b = new Matrix(2,2);
-b.randint(5)
-console.table(a.value)
-console.table(b.value)
-let c = a.dot(b)
-console.table(c.value);
 
+    //REturns
+    map(func){
+        let result = new Matrix(this.rows, this.cols);
+        for(let i = 0; i < this.rows; i++){
+            for(let j = 0; j < this.cols; j++){
+                result.value[i][j] = func(this.value[i][j]);
+            }
+        }
+        return result;
+    }
+
+    normalize(){
+        let max = 0;
+        let min = Infinity;
+        for(let i = 0; i < this.rows; i++){
+            for(let j = 0; j < this.cols; j++){
+                if(this.value[i][j] < min) min = this.this.value[i][j];
+                if(this.value[i][j] > max) max = this.this.value[i][j];
+            }
+        }
+        for(let i = 0; i < this.rows; i++){
+            for(let j = 0; j < this.cols; j++){
+                this.value[i][j] = (this.this.value[i][j] - min) / (max - min);
+            }
+        }
+    }
+
+    addBias(){
+        for(let i = 0; i < this.rows; i++){
+            this.value[i].unshift(1);
+        }
+        this.cols++
+    }
+
+    print(){
+        console.table(this.value);
+    }
+
+    //Returns
+    static dot(a, b){
+        if(a.cols != b.rows) throw new Error('Dimentions does not match.');
+        let result = new Matrix(a.rows, b.cols);
+        result.zeros();
+        for(let i = 0; i < a.rows; i++){
+            for(let j = 0; j < b.cols; j++){
+                for(let k = 0; k < a.cols; k++){
+                    result.value[i][j] += a.value[i][k] * b.value[k][j]
+
+                }
+            }
+        }
+        return result;
+    }
+}
 
 
 /*
