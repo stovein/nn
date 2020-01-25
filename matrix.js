@@ -217,6 +217,13 @@ class Matrix {
         this.cols++
     }
 
+    removeBias(){
+        for(let i = 0; i < this.rows; i++){
+            this.value[i].shift();
+        }
+        this.cols--;
+    }
+
     print(){
         console.table(this.value);
     }
