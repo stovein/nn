@@ -40,22 +40,23 @@ class NeuralNetwork {
 
     train(x, y) {
         let a1 = x.dot(this.w_1.transpose());
-        a1.addBias(); // add bias to a1
         let a2 = a1.map(sigmoid);
+        a2.addBias(); // add bias to a1
         
         // bias ekleyince dimentionlar matchlenmiyor onları kontrol et
 
         let a3 = a2.dot(this.w_2.transpose());
         a3 = a3.map(sigmoid);
-        
-        let delta3 = a3.eSub(y);
-        delta3.sMult(2); // derivative of (a3 - y) ^2 
+        a3.print()
+        let delta3 = y.eSub(a3);
+        //delta3.sMult(2); // derivative of (a3 - y) ^2 
 
         // dimention check!!
         let w2t = this.w_2.transpose();
         let delta2 = w2t.dot(delta3.transpose());
         delta2 = delta2.transpose();
-        
+
+        a1.addBias();
         delta2 = delta2.eMult(a1.map(sigmoidGradient)); // dimention hatasını burdan alıyorum
         
         // weight adjustlamak için değişkneler matematiği kontrol et
@@ -65,10 +66,13 @@ class NeuralNetwork {
         // gradları(chain ruled kısımlar) alpha ile çarp
         w_1_grad.sMult(this.alpha);
         w_1_grad.removeBias();
+        w_1_grad = w_1_grad.transpose();
         w_2_grad.sMult(this.alpha);
  
         // alpha ekledikten sonra asıl wightlerden çıkarıp adjustlama yeri
-        this.w_1 = this.w_1.eSub(w_1_grad.transpose());
+        console.log(w_1_grad)
+        console.log(this.w_1)
+        this.w_1 = this.w_1.eSub(w_1_grad);
         this.w_2 = this.w_2.eSub(w_2_grad);
     }
 }
